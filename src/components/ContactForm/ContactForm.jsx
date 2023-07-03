@@ -1,33 +1,42 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { add } from '../redux/sliceContact';
+
 import styles from './ContactForm.module.css';
 
-const ContactForm = ({ onSubmit }) => {
+export const ContactForm = () => {
+  const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    if (name === 'name') {
-      setName(value);
-    } else if (name === 'number') {
-      setNumber(value);
-    }
+  const handleChange = evt => {
+    const { name, value } = evt.target;
+    name === 'name' ? setName(value) : setNumber(value);
   };
-
-  const handleSubmit = e => {
-    e.preventDefault();
-
-    onSubmit({ name, number });
-    resetForm();
-  };
-
-  const resetForm = () => {
+  const reset = () => {
     setName('');
     setNumber('');
   };
-
+  const contacts = useSelector(state => state.contacts);
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form
+      className={styles.form}
+      onSubmit={e => {
+        e.preventDefault();
+        if (
+          contacts.some(
+            value => value.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+          )
+        ) {
+          alert(`${name} is already in contacts`);
+        } else {
+          dispatch(add({ name, number }));
+        }
+        reset();
+      }}
+    >
       <label>
         Name
         <input
@@ -41,6 +50,7 @@ const ContactForm = ({ onSubmit }) => {
           required
         />
       </label>
+
       <label>
         Number
         <input
@@ -54,12 +64,9 @@ const ContactForm = ({ onSubmit }) => {
           required
         />
       </label>
-
-      <button type="submit" className={styles.buttonEditor}>
+      <button className={styles.buttonEditor} type="submit">
         Add contact
       </button>
     </form>
   );
 };
-
-export default ContactForm;

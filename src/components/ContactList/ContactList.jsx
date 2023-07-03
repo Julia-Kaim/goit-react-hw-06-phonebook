@@ -1,36 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
+
 import styles from './ContactList.module.css';
+import { useDispatch } from 'react-redux';
+import { remove } from '../redux/sliceContact';
 
-const ContactList = ({ contacts, onDeleteContact }) => (
-  <ul className={styles.list}>
-    {contacts.map(({ id, name, number }) => (
-      <li key={id} className={styles.item}>
-        <p className={styles.contact}>
-          {name}........
-          {number}
-        </p>
-        <button
-          className={styles.btn}
-          type="submit"
-          onClick={() => onDeleteContact(id)}
-        >
-          Delete
-        </button>
-      </li>
-    ))}
-  </ul>
-);
-
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
-  onDeleteContact: PropTypes.func.isRequired,
+export const ContactList = ({ listContact }) => {
+  const dispatch = useDispatch();
+  return listContact.map(cont => {
+    return (
+      <ul className={styles.list}>
+        <li key={cont.id} className={styles.item}>
+          <p key={cont.id} className={styles.contact}>
+            {cont.name}......... {cont.number}
+          </p>
+          <button
+            className={styles.btn}
+            type="submit"
+            onClick={() => {
+              dispatch(remove(cont.id));
+            }}
+          >
+            Delete
+          </button>
+        </li>
+      </ul>
+    );
+  });
 };
 
-export default ContactList;
+ContactList.propTypes = {
+  listContact: PropTypes.array.isRequired,
+};
