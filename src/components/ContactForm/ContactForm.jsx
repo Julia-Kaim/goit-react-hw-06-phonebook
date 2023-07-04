@@ -2,7 +2,8 @@ import React from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { add } from '../redux/sliceContact';
+import { add } from '../../redux/sliceContact';
+import { selectContacts } from 'redux/selectors';
 
 import styles from './ContactForm.module.css';
 
@@ -19,7 +20,7 @@ export const ContactForm = () => {
     setName('');
     setNumber('');
   };
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(selectContacts);
   return (
     <form
       className={styles.form}
